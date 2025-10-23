@@ -1,0 +1,112 @@
+name: Static code checks
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "**" # target all branches
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_LOG: debug
+  RUST_BACKTRACE: full
+
+jobs:
+  static_checks_ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Update the list of available system packages
+        run: sudo apt-get update
+
+      - name: Install dependencies
+        run: sudo apt-get install -yqq --no-install-recommends build-essential
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: './build-tools/.python-version'
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+            --default-toolchain $(python ./build-tools/cargo-info-extractor/extract.py --rust-version)
+
+      - name: Install Clippy
+        run: rustup component add clippy
+
+      - name: Install cargo-deny
+        run: cargo install cargo-deny --locked
+
+      - name: Run checks
+        run: ./do_checks.sh
+
+  static_checks_macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: './build-tools/.python-version'
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+            --default-toolchain $(python ./build-tools/cargo-info-extractor/extract.py --rust-version)
+
+      - name: Install Clippy
+        run: rustup component add clippy
+
+      - name: Install cargo-deny
+        run: cargo install cargo-deny --locked
+
+      - name: Run checks
+        shell: bash
+        run: ./do_checks.sh
+
+  static_checks_windows:
+    runs-on: windows-latest
+    steps:
+      # This prevents git from changing line-endings to crlf, which messes cargo fmt checks
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Checkout the repository
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: './build-tools/.python-version'
+
+      - name: Install Rust
+        # Use bash to be able to escape the newline via '\'.
+        shell: bash
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+            --default-toolchain $(python ./build-tools/cargo-info-extractor/extract.py --rust-version)
+
+      - name: Install Clippy
+        run: rustup component add clippy
+
+      - name: Install cargo-deny
+        run: cargo install cargo-deny --locked
+
+      - name: Run checks
+        shell: bash
+        run: ./do_checks.sh

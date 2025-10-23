@@ -1,0 +1,22 @@
+[package]
+name = "mintlayer-core-primitives"
+description = "Mintlayer Core primitive types"
+homepage = "https://mintlayer.org"
+repository = "https://github.com/mintlayer/mintlayer-core-primitives"
+readme = "README.md"
+license = "MIT"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.88"
+
+[dependencies]
+derive_more = { version = "2.0", default-features = false, features = ["debug"] }
+fixed-hash = { version = "0.8", default-features = false }
+parity-scale-codec = { version = "3.7", default-features = false, features = ["derive"] }
+strum = { version = "0.27", default-features = false, features = ["derive"] }
+
+[dev-dependencies]
+hex = "0.4"
+
+[features]
+dev = [] # used by fixed-hash

@@ -1,0 +1,50 @@
+[sources.allow-org]
+github = [
+    "mintlayer", # allow any code from mintlayer's github
+]
+
+[licenses]
+# We reject code without a license.
+# TODO: we also use the "MITNFA" license (AKA "MIT +no-false-attribs"); this comes from the `hex_lit`
+# crate, which is indirectly used by `trezor-client`. The license itself is fine, but for some reason
+# `cargo deny` doesn't complain about it even though it's not in the list (but note that it does complain
+# about it in the `bridge_v2` repo, which inherits `hex_lit` from `mintlayer-core`).
+# Need to investigate why it happens.
+confidence-threshold = 0.92
+allow = [
+    "0BSD",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Unlicense", # this is a specific license rather than no license at all
+    "Zlib",
+] # deny a license not in this set of licenses
+
+[[licenses.clarify]]
+name = "ring"
+expression = "LicenseRef-ring"
+license-files = [
+    { path = "LICENSE", hash = 0xbd0eed23 },
+]
+
+[[licenses.clarify]]
+name = "webpki"
+expression = "LicenseRef-webpki"
+license-files = [
+    { path = "LICENSE", hash = 0x001c7e6c },
+]
+
+[advisories]
+version = 2
+db-path = "~/.cargo/advisory-dbs"
+db-urls = [ "https://github.com/RustSec/advisory-db" ]
+yanked = "warn"
+ignore = [
+    "RUSTSEC-2024-0436", # "paste" is no longer maintained
+]
