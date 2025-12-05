@@ -6,13 +6,18 @@ repository = "https://github.com/mintlayer/mintlayer-core-primitives"
 readme = "README.md"
 license = "MIT"
 version = "1.0.0"
-edition = "2024"
-rust-version = "1.88"
+edition = "2021"
+rust-version = "1.85"
 
 [dependencies]
-derive_more = { version = "2.0", default-features = false, features = ["debug"] }
+derive_more = { version = "2.0", default-features = false, features = [
+  "debug",
+] }
 fixed-hash = { version = "0.8", default-features = false }
-parity-scale-codec = { version = "3.7", default-features = false, features = ["derive"] }
+parity-scale-codec = { git = "https://github.com/paritytech/parity-scale-codec.git", rev = "5021525697edc0661591ebc71392c48d950a10b0", default-features = false, features = [
+  "derive",
+] }
+
 strum = { version = "0.27", default-features = false, features = ["derive"] }
 
 [dev-dependencies]
