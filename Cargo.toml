@@ -6,13 +6,29 @@ repository = "https://github.com/mintlayer/mintlayer-core-primitives"
 readme = "README.md"
 license = "MIT"
 version = "1.0.0"
-edition = "2024"
-rust-version = "1.88"
+edition = "2021"
+# Note: the maximum Rust version we can use here is limited by the Rust toolchains available
+# in the Nix packages and Docker images used by the Trezor firmware and Ledger app repositories.
+# There is also another Rust version hard-coded in `build-tools/cargo-info-extractor/extract.py` -
+# `RUST_VERSION_FOR_CHECKS`; it's used to run `do_checks.sh` and it may be higher than this one.
+rust-version = "1.85"
 
 [dependencies]
-derive_more = { version = "2.0", default-features = false, features = ["debug"] }
+derive_more = { version = "2.0", default-features = false, features = [
+  "debug",
+] }
 fixed-hash = { version = "0.8", default-features = false }
-parity-scale-codec = { version = "3.7", default-features = false, features = ["derive"] }
+
+# Use the specific commit "5021525697edc0661591ebc71392c48d950a10b0",
+# which includes a fix for NanoX devices that do not support certain
+# atomic operations.
+#
+# Fix reference: https://github.com/paritytech/parity-scale-codec/pull/751
+# This fix should be included in releases after version 3.7.5.
+parity-scale-codec = { git = "https://github.com/paritytech/parity-scale-codec.git", rev = "5021525697edc0661591ebc71392c48d950a10b0", default-features = false, features = [
+  "derive",
+] }
+
 strum = { version = "0.27", default-features = false, features = ["derive"] }
 
 [dev-dependencies]
