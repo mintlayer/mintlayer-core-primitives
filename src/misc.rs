@@ -15,7 +15,7 @@
 
 use parity_scale_codec::{Decode, DecodeAll, Encode};
 
-use crate::{Destination, TokenId};
+use crate::TokenId;
 
 pub type PscVec<T> = parity_scale_codec::alloc::vec::Vec<T>;
 
@@ -92,115 +92,6 @@ pub type SecondsCountUIntType = u64;
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Encode, Decode)]
 pub struct SecondsCount(#[codec(compact)] pub SecondsCountUIntType);
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum CoinType {
-    Mainnet,
-    Testnet,
-    Regtest,
-    Signet,
-}
-
-impl CoinType {
-    pub const fn coin_ticker(&self) -> &'static str {
-        match self {
-            Self::Mainnet => "ML",
-            Self::Testnet => "TML",
-            Self::Regtest => "RML",
-            Self::Signet => "SML",
-        }
-    }
-
-    pub const fn bip44_coin_type(&self) -> u32 {
-        let hardened_bit = 1 << 31;
-        match self {
-            Self::Mainnet => 19788 + hardened_bit,
-            Self::Testnet | Self::Regtest | Self::Signet => 1 + hardened_bit,
-        }
-    }
-
-    pub const fn coin_decimals(&self) -> u8 {
-        11
-    }
-
-    pub const fn address_prefix(&self, destination: &Destination) -> &'static str {
-        match self {
-            Self::Mainnet => match destination {
-                Destination::AnyoneCanSpend => "mxanyonecanspend",
-                Destination::PublicKeyHash(_) => "mtc",
-                Destination::PublicKey(_) => "mptc",
-                Destination::ScriptHash(_) => "mstc",
-                Destination::ClassicMultisig(_) => "mmtc",
-            },
-            Self::Testnet => match destination {
-                Destination::AnyoneCanSpend => "txanyonecanspend",
-                Destination::PublicKeyHash(_) => "tmt",
-                Destination::PublicKey(_) => "tpmt",
-                Destination::ScriptHash(_) => "tstc",
-                Destination::ClassicMultisig(_) => "tmtc",
-            },
-            Self::Regtest => match destination {
-                Destination::AnyoneCanSpend => "rxanyonecanspend",
-                Destination::PublicKeyHash(_) => "rmt",
-                Destination::PublicKey(_) => "rpmt",
-                Destination::ScriptHash(_) => "rstc",
-                Destination::ClassicMultisig(_) => "rmtc",
-            },
-            Self::Signet => match destination {
-                Destination::AnyoneCanSpend => "sxanyonecanspend",
-                Destination::PublicKeyHash(_) => "smt",
-                Destination::PublicKey(_) => "spmt",
-                Destination::ScriptHash(_) => "sstc",
-                Destination::ClassicMultisig(_) => "smtc",
-            },
-        }
-    }
-
-    pub const fn pool_id_address_prefix(&self) -> &'static str {
-        match self {
-            Self::Mainnet => "mpool",
-            Self::Testnet => "tpool",
-            Self::Regtest => "rpool",
-            Self::Signet => "spool",
-        }
-    }
-
-    pub const fn delegation_id_address_prefix(&self) -> &'static str {
-        match self {
-            Self::Mainnet => "mdelg",
-            Self::Testnet => "tdelg",
-            Self::Regtest => "rdelg",
-            Self::Signet => "sdelg",
-        }
-    }
-
-    pub const fn token_id_address_prefix(&self) -> &'static str {
-        match self {
-            Self::Mainnet => "mmltk",
-            Self::Testnet => "tmltk",
-            Self::Regtest => "rmltk",
-            Self::Signet => "smltk",
-        }
-    }
-
-    pub const fn order_id_address_prefix(&self) -> &'static str {
-        match self {
-            Self::Mainnet => "mordr",
-            Self::Testnet => "tordr",
-            Self::Regtest => "rordr",
-            Self::Signet => "sordr",
-        }
-    }
-
-    pub const fn vrf_public_key_address_prefix(&self) -> &'static str {
-        match self {
-            Self::Mainnet => "mvrfpk",
-            Self::Testnet => "tvrfpk",
-            Self::Regtest => "rvrfpk",
-            Self::Signet => "svrfpk",
-        }
-    }
-}
-
 pub fn encode<T: Encode>(t: &T) -> PscVec<u8> {
     t.encode()
 }
@@ -209,10 +100,13 @@ pub fn encode_to<T: Encode>(t: &T, buf: &mut PscVec<u8>) {
     t.encode_to(buf)
 }
 
-pub fn decode_all<T: Decode>(mut bytes: &[u8]) -> Option<T> {
-    T::decode_all(&mut bytes).ok()
+pub fn decode_all<T: Decode>(mut bytes: &[u8]) -> Result<T, parity_scale_codec::Error> {
+    T::decode_all(&mut bytes)
 }
 
-pub fn encode_as_compact(num: u32) -> PscVec<u8> {
-    parity_scale_codec::Compact::<u32>::encode(&num.into())
+pub fn encode_as_compact<T>(num: T) -> PscVec<u8>
+where
+    for<'a> parity_scale_codec::CompactRef<'a, T>: Encode + From<&'a T>,
+{
+    parity_scale_codec::Compact::<T>::encode(&num.into())
 }

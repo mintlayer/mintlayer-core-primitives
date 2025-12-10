@@ -18,6 +18,13 @@ derive_more = { version = "2.0", default-features = false, features = [
   "debug",
 ] }
 fixed-hash = { version = "0.8", default-features = false }
+
+# Use the specific commit "5021525697edc0661591ebc71392c48d950a10b0",
+# which includes a fix for NanoX devices that do not support certain
+# atomic operations.
+#
+# Fix reference: https://github.com/paritytech/parity-scale-codec/pull/751
+# This fix should be included in releases after version 3.7.5.
 parity-scale-codec = { git = "https://github.com/paritytech/parity-scale-codec.git", rev = "5021525697edc0661591ebc71392c48d950a10b0", default-features = false, features = [
   "derive",
 ] }
