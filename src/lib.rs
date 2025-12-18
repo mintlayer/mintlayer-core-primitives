@@ -16,6 +16,7 @@
 #![no_std]
 
 mod accounts;
+mod coin_type;
 mod crypto;
 mod destination;
 mod id;
@@ -30,6 +31,7 @@ mod utxo_outpoint;
 mod tests;
 
 pub use accounts::*;
+pub use coin_type::*;
 pub use crypto::*;
 pub use destination::*;
 pub use id::*;
