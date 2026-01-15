@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::Destination;
+use crate::DestinationTag;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CoinType {
@@ -45,35 +45,35 @@ impl CoinType {
         11
     }
 
-    pub const fn address_prefix(&self, destination: &Destination) -> &'static str {
+    pub const fn address_prefix(&self, destination: DestinationTag) -> &'static str {
         match self {
             Self::Mainnet => match destination {
-                Destination::AnyoneCanSpend => "mxanyonecanspend",
-                Destination::PublicKeyHash(_) => "mtc",
-                Destination::PublicKey(_) => "mptc",
-                Destination::ScriptHash(_) => "mstc",
-                Destination::ClassicMultisig(_) => "mmtc",
+                DestinationTag::AnyoneCanSpend => "mxanyonecanspend",
+                DestinationTag::PublicKeyHash => "mtc",
+                DestinationTag::PublicKey => "mptc",
+                DestinationTag::ScriptHash => "mstc",
+                DestinationTag::ClassicMultisig => "mmtc",
             },
             Self::Testnet => match destination {
-                Destination::AnyoneCanSpend => "txanyonecanspend",
-                Destination::PublicKeyHash(_) => "tmt",
-                Destination::PublicKey(_) => "tpmt",
-                Destination::ScriptHash(_) => "tstc",
-                Destination::ClassicMultisig(_) => "tmtc",
+                DestinationTag::AnyoneCanSpend => "txanyonecanspend",
+                DestinationTag::PublicKeyHash => "tmt",
+                DestinationTag::PublicKey => "tpmt",
+                DestinationTag::ScriptHash => "tstc",
+                DestinationTag::ClassicMultisig => "tmtc",
             },
             Self::Regtest => match destination {
-                Destination::AnyoneCanSpend => "rxanyonecanspend",
-                Destination::PublicKeyHash(_) => "rmt",
-                Destination::PublicKey(_) => "rpmt",
-                Destination::ScriptHash(_) => "rstc",
-                Destination::ClassicMultisig(_) => "rmtc",
+                DestinationTag::AnyoneCanSpend => "rxanyonecanspend",
+                DestinationTag::PublicKeyHash => "rmt",
+                DestinationTag::PublicKey => "rpmt",
+                DestinationTag::ScriptHash => "rstc",
+                DestinationTag::ClassicMultisig => "rmtc",
             },
             Self::Signet => match destination {
-                Destination::AnyoneCanSpend => "sxanyonecanspend",
-                Destination::PublicKeyHash(_) => "smt",
-                Destination::PublicKey(_) => "spmt",
-                Destination::ScriptHash(_) => "sstc",
-                Destination::ClassicMultisig(_) => "smtc",
+                DestinationTag::AnyoneCanSpend => "sxanyonecanspend",
+                DestinationTag::PublicKeyHash => "smt",
+                DestinationTag::PublicKey => "spmt",
+                DestinationTag::ScriptHash => "sstc",
+                DestinationTag::ClassicMultisig => "smtc",
             },
         }
     }
