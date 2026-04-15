@@ -10,5 +10,5 @@ they are encode-compatible with them.
 "foundational" crates [^1] into a separate repository and make them usable (in a limited way)
 in `no_std` mode.
 
-[^1]: iI.e. `common` and `crypto` as well as the utility crates that they depend on - `utils`,
-`serialization`, `logging` etc).
+[^1]: I.e. `common` and `crypto` as well as the utility crates that they depend on - `utils`,
+`serialization`, `logging` etc.
